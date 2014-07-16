@@ -118,13 +118,12 @@
             }
 
             var foreground = new L.NonTiledLayer.WMS(url + '/WMS/WMS?xtok=' + token, {
+                zIndex: 0,
                 opacity: 1.0,
                 layers: 'xmap-ajaxfg' + style,
                 format: 'image/png',
                 transparent: true,
                 attribution: attribution,
-                pane: labelContainer,
-                zIndex: 50,
                 opacity: 1.0,
             });
 
