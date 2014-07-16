@@ -12,7 +12,6 @@ L.NonTiledLayer = L.Class.extend({
     },
 
     // override this method in the inherited class
-    // override this method in the inherited class
     //getImageUrl: function (world1, world2, width, height) {},
     //getImageUrlAsync: function (world1, world2, width, height, f) {},
 
@@ -169,15 +168,11 @@ L.NonTiledLayer = L.Class.extend({
 
     _update: function () {
         if (this._map.getZoom() < this.options.maxZoom) {
-            if (!this._zoomHidden) {
-                this._zoomHidden = true;
-                this._pane.removeChild(this._div);
-            }
+            this._div.style.visibility='hidden';
             return;
         }
-        else if (this._zoomHidden) {
-            this._zoomHidden = false;
-            this._pane.appendChild(this._div);
+        else {
+            this._div.style.visibility = 'visible';
         }
 
         if (this._bufferImage)
