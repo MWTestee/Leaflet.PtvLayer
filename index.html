@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+    <title>Leaflet NonTiledLayer Example</title>
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <link href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body,
+        #map {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="./NonTiledLayer.js"></script>
+    <script src="./NonTiledLayer.WMS.js"></script>
+    <script src="./Leaflet.PtvLayer.js"></script>
+    <script src="./token.js"></script>
+    <script>
+        // initialize leaflet
+        var map = new L.Map('map');
+
+        var center = new L.LatLng(49.01, 8.4);
+
+        // center Karlsruhe
+        map.setView(center, 16);
+
+        // using the xmap WMS servlet
+        var xMapUrl = 'https://xmap-eu-n-test.cloud.ptvgroup.com';
+        var xMapAttribution = '<a href="http://www.ptvgroup.com">PTV</a>, TOMTOM';
+
+        // add the xServer layers
+        // set the layer groups for default and sandbox
+        var baseLayers = {
+            "PTV classic": GetXMapBaseLayers(xMapUrl, "", xMapAttribution, token, map.getPanes().tilePane),
+            "PTV sandbox": GetXMapBaseLayers(xMapUrl, "-sandbox", xMapAttribution, token, map.getPanes().tilePane).addTo(map),
+            "PTV silkysand": GetXMapBaseLayers(xMapUrl, "-silkysand", xMapAttribution, token, map.getPanes().tilePane)
+        };
+
+        if (!token) {
+            var popupMsg = 'Please provide your token in token.js' +
+                '<br>You can register for trial access' + 
+				'<a href="http://xserver.ptvgroup.com/en-uk/products/ptv-xserver-internet/test/">here</a>.';
+
+            // add a marker in the given location, 
+            // attach some popup content to it and open the popup
+            L.marker(center).addTo(map)
+                .bindPopup(popupMsg)
+                .openPopup();
+
+            throw "no token";
+        }
+
+        // add truck attributes.
+        var traffic = new L.PtvLayer.TrafficInformation(xMapUrl, {
+            zIndex: 1,
+            attribution: xMapAttribution,
+            token: token
+        }).addTo(map);
+
+        // add truck attributes.
+        var ta = new L.PtvLayer.TruckAttributes(xMapUrl, {
+            zIndex: 2,
+            attribution: xMapAttribution,
+            token: token
+        }).addTo(map);
+
+        // add truck attributes.
+        var poi = new L.PtvLayer.POI(xMapUrl, {
+            zIndex: 3,
+            attribution: xMapAttribution,
+            token: token
+        }).addTo(map);
+
+        // add truck attributes.
+        var tpe = new L.PtvLayer.TruckParking(xMapUrl, {
+            zIndex: 4,
+            attribution: xMapAttribution,
+            token: token
+        }).addTo(map);
+
+        // add layer selector
+        var overlays = {
+            "POIs": poi,
+            "Truck Attributes": ta,
+            "Truck Parking": tpe,
+            "Traffic": traffic
+        };
+        L.control.layers(baseLayers, overlays).addTo(map);
+
+        // returns a layer group for xmap back- and foreground layers
+        function GetXMapBaseLayers(url, style, attribution, token, labelContainer) {
+            var background = new L.TileLayer.WMS(url + '/WMS/WMS', {
+                maxZoom: 19,
+                minZoom: 0,
+                opacity: 1.0,
+                noWrap: true,
+                layers: 'xmap-ajaxbg-sandbox',
+                format: 'image/png',
+                transparent: false,
+                attribution: attribution
+            });
+
+            if (!token) {
+                background.options.opacity = .4;
+                return background;
+            }
+
+            var foreground = new L.NonTiledLayer.WMS(url + '/WMS/WMS?xtok=' + token, {
+                opacity: 1.0,
+                layers: 'xmap-ajaxfg-sandbox',
+                format: 'image/png',
+                transparent: true,
+                attribution: attribution,
+                pane: labelContainer,
+                zIndex: 50,
+                opacity: 1.0,
+            });
+
+            return L.layerGroup([background, foreground]);
+        }
+    </script>
+</body>
+</html>
