@@ -11,5 +11,7 @@ Layers for additional content with tool-tip interaction
 * Traffic Information
 * Truck Parking Europe
 
-To use this plugin, you need a PTV xMapServer installation or an xServer internet subscription. 
+You can test the layers here http://ptv-logistics.github.io/Leaflet.PtvLayer/
+
+To use this code, you need a PTV xMapServer installation or an xServer internet subscription. 
 Go to http://xserver.ptvgroup.com/en-uk/products/ptv-xserver-internet/test/ to get a trial token.
