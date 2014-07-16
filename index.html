@@ -39,7 +39,7 @@
 
         // using the xmap WMS servlet
         var xMapUrl = 'https://xmap-eu-n-test.cloud.ptvgroup.com';
-        var xMapAttribution = '<a href="http://www.ptvgroup.com">PTV</a>, TOMTOM';
+        var xMapAttribution = '<a href="http://www.ptvgroup.com">PTV<\/a>, TOMTOM';
 
         // add the xServer layers
         // set the layer groups for default and sandbox
@@ -50,9 +50,8 @@
         };
 
         if (!token) {
-            var popupMsg = 'Please provide your token in token.js' +
-                '<br>You can register for trial access' + 
-				'<a href="http://xserver.ptvgroup.com/en-uk/products/ptv-xserver-internet/test/">here</a>.';
+            var popupMsg = 'Please provide your token in ' +
+                'the<br>script code and press Run to reload';
 
             // add a marker in the given location, 
             // attach some popup content to it and open the popup
@@ -60,7 +59,7 @@
                 .bindPopup(popupMsg)
                 .openPopup();
 
-            throw "no token";
+            throw "NO TOKEN";
         }
 
         // add truck attributes.
@@ -107,7 +106,7 @@
                 minZoom: 0,
                 opacity: 1.0,
                 noWrap: true,
-                layers: 'xmap-ajaxbg-sandbox',
+                layers: 'xmap-ajaxbg' + style,
                 format: 'image/png',
                 transparent: false,
                 attribution: attribution
@@ -120,7 +119,7 @@
 
             var foreground = new L.NonTiledLayer.WMS(url + '/WMS/WMS?xtok=' + token, {
                 opacity: 1.0,
-                layers: 'xmap-ajaxfg-sandbox',
+                layers: 'xmap-ajaxfg' + style,
                 format: 'image/png',
                 transparent: true,
                 attribution: attribution,
