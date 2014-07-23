@@ -219,15 +219,15 @@ L.NonTiledLayer = L.Class.extend({
             return;
         }
 
-        if (this._bufferImage)
-            this._div.removeChild(this._bufferImage);
-
         if (this._addInteraction)
             this._addInteraction(this._currentImage.tag)
 
-        this._bufferImage = this._currentImage;
-
         L.DomUtil.setOpacity(this._currentImage, this.options.opacity);
+
+        if (this._bufferImage)
+            this._div.removeChild(this._bufferImage);
+
+        this._bufferImage = this._currentImage;
 
         this.fire('load');
     },
