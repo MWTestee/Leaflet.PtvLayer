@@ -36,7 +36,7 @@ L.PtvLayer = L.NonTiledLayer.extend({
         L.NonTiledLayer.prototype.onRemove.call(this, map);
     },
 
-    getImageUrlAsync: function (world1, world2, width, height, callback) {
+    getImageUrlAsync: function (world1, world2, width, height, key, callback) {
         var xMapParams = this.xMapParams;
         xMapParams.width = width;
         xMapParams.height = height;
@@ -52,7 +52,7 @@ L.PtvLayer = L.NonTiledLayer.extend({
                     "Qk02U": "data:image/bmp;base64,"
                 };
                 var rawImage = resp.image.rawImage;
-                callback(prefixMap[rawImage.substr(0, 5)] + rawImage, resp);
+                callback(key, prefixMap[rawImage.substr(0, 5)] + rawImage, resp);
             }, function (xhr) { callback(L.Util.emptyImageUrl); });
     },
 
