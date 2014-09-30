@@ -213,6 +213,21 @@ L.PtvLayer.TrafficInformation = L.PtvLayer.extend({
     }
 });
 
+L.PtvLayer.DataManager = L.PtvLayer.extend({
+    initialize: function (url, options) { // (String, Object)
+        L.PtvLayer.prototype.initialize.call(this, url, options);
+    },
+
+    getRequest: function (world1, world2, width, height) {
+        var request = L.PtvLayer.prototype.getRequest.call(this, world1, world2, width, height);
+
+        request.layers = [{ "$type": "SMOLayer", "name": "t_164a79f7_f40b_4045_97f1_d0c96ebffb3e.t_164a79f7_f40b_4045_97f1_d0c96ebffb3e", "visible": true, "objectInfos": "FULLGEOMETRY" }];
+        request.callerContext.properties.push(                    { "key": "ProfileXMLSnippet", "value":  "/profiles/datamanager/xmap/t_164a79f7_f40b_4045_97f1_d0c96ebffb3e" });
+        
+        return request;
+    }
+});
+
 L.PtvLayer.TruckAttributes = L.PtvLayer.extend({
     initialize: function (url, options) { // (String, Object)
         if (options.minZoom == null)

@@ -62,6 +62,9 @@
             throw "NO TOKEN";
         }
 
+        // add scale control
+        L.control.scale().addTo(map);
+
         // add truck attributes.
         var traffic = new L.PtvLayer.TrafficInformation(xMapUrl, {
             zIndex: 1,
