@@ -9,7 +9,7 @@ L.NonTiledLayer = L.Class.extend({
         pane: null,
         zIndex: undefined,
         minZoom: 0,
-        maxZoom: 19
+        maxZoom: 18
     },
     key: '',
 
@@ -96,7 +96,7 @@ L.NonTiledLayer = L.Class.extend({
     },
 
 
-    _initImage: function (_image) {
+    _initImage: function () {
         var _image = L.DomUtil.create('img', 'leaflet-image-layer');
 
         if (this.options.zIndex !== undefined)
@@ -130,7 +130,7 @@ L.NonTiledLayer = L.Class.extend({
     },
 
     _animateZoom: function (e) {
-        if (this._currentImage._bounds)
+	    if (this._currentImage._bounds)
             this._animateImage(this._currentImage, e);
         if (this._bufferImage._bounds)
             this._animateImage(this._bufferImage, e);
@@ -138,16 +138,18 @@ L.NonTiledLayer = L.Class.extend({
 
     _animateImage: function (image, e) {
         var map = this._map,
-		    scale = map.getZoomScale(e.zoom),
+		    scale = image._scale * map.getZoomScale(e.zoom),
 		    nw = image._bounds.getNorthWest(),
 		    se = image._bounds.getSouthEast(),
-
+			
 		    topLeft = map._latLngToNewLayerPoint(nw, e.zoom, e.center),
 		    size = map._latLngToNewLayerPoint(se, e.zoom, e.center)._subtract(topLeft),
 		    origin = topLeft._add(size._multiplyBy((1 / 2) * (1 - 1 / scale)));
 
         image.style[L.DomUtil.TRANSFORM] =
 		        L.DomUtil.getTranslateString(origin) + ' scale(' + scale + ') ';
+				
+		image._lastScale = scale;
     },
 
     _resetImage: function (image) {
@@ -181,21 +183,22 @@ L.NonTiledLayer = L.Class.extend({
         return new L.LatLngBounds(world1, world2);
     },
 
-    _update: function () {
+    _update: function () {	
         if (this.options.minZoom && this._map.getZoom() < this.options.minZoom) {
-            this._div.style.visibility = 'hidden';
+            this._currentImage.src = L.Util.emptyImageUrl;
+            this._bufferImage.src = L.Util.emptyImageUrl;
+			this._div.style.visibility = 'hidden';
             return;
         }
         else if (this.options.maxZoom && this._map.getZoom() > this.options.maxZoom) {
+            this._currentImage.src = L.Util.emptyImageUrl;
+            this._bufferImage.src = L.Util.emptyImageUrl;
             this._div.style.visibility = 'hidden';
             return;
         }
         else {
             this._div.style.visibility = 'visible';
         }
-
-        if (this._bufferImage._bounds)
-            this._resetImage(this._bufferImage);
 
         var bounds = this._getClippedBounds();
 
@@ -211,8 +214,12 @@ L.NonTiledLayer = L.Class.extend({
         if (width < 32 || height < 32)
             return;
 
-        this._currentImage._bounds = bounds;
+		// set scales for zoom animation
+		this._bufferImage._scale = this._bufferImage._lastScale;
+		this._currentImage._scale = 1;
+		this._currentImage._lastScale = 1;
 
+        this._currentImage._bounds = bounds;
         this._resetImage(this._currentImage);
 
         var oiua = this._onImageUrlAsync;
@@ -230,8 +237,6 @@ L.NonTiledLayer = L.Class.extend({
                 oiua(i, k, url, tag);
             });
         }
-
-        L.DomUtil.setOpacity(this._currentImage, 0);
     },
 
     _onImageUrlAsync: function (i, k, url, tag) {
@@ -243,14 +248,18 @@ L.NonTiledLayer = L.Class.extend({
     }, 
 
     _onImageLoad: function (e) {
+		if(e.target.src ==  L.Util.emptyImageUrl)
+			return;
+	
         if (this.key != e.target.key)
             return;
-
+						
         if (this._addInteraction)
-            this._addInteraction(this._currentImage.tag)
+            this._addInteraction(this._currentImage.tag);
 
         L.DomUtil.setOpacity(this._currentImage, this.options.opacity);
         L.DomUtil.setOpacity(this._bufferImage, 0);
+        this._bufferImage.src = L.Util.emptyImageUrl;
 
         var tmp = this._bufferImage;
         this._bufferImage = this._currentImage;

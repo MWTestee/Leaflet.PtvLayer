@@ -168,6 +168,7 @@ L.PtvLayer.TruckParking = L.PtvLayer.extend({
     initialize: function (url, options) { // (String, Object)
         if (options.minZoom == null)
             options.minZoom = 9;
+		options.maxZoom = 19;
         L.PtvLayer.prototype.initialize.call(this, url, options);
     },
 
@@ -185,6 +186,7 @@ L.PtvLayer.POI = L.PtvLayer.extend({
     initialize: function (url, options) { // (String, Object)
         if (options.minZoom == null)
             options.minZoom = 16;
+		options.maxZoom = 19;
         L.PtvLayer.prototype.initialize.call(this, url, options);
     },
 
@@ -201,6 +203,7 @@ L.PtvLayer.TrafficInformation = L.PtvLayer.extend({
     initialize: function (url, options) { // (String, Object)
         if (options.minZoom == null)
             options.minZoom = 10;
+		options.maxZoom = 19;
         L.PtvLayer.prototype.initialize.call(this, url, options);
     },
 
@@ -215,6 +218,8 @@ L.PtvLayer.TrafficInformation = L.PtvLayer.extend({
 
 L.PtvLayer.DataManager = L.PtvLayer.extend({
     initialize: function (url, options) { // (String, Object)
+        options.minZoom = 0;
+		options.maxZoom = 19;
         L.PtvLayer.prototype.initialize.call(this, url, options);
     },
 
@@ -232,6 +237,7 @@ L.PtvLayer.TruckAttributes = L.PtvLayer.extend({
     initialize: function (url, options) { // (String, Object)
         if (options.minZoom == null)
             options.minZoom = 15;
+		options.maxZoom = 19;
         L.PtvLayer.prototype.initialize.call(this, url, options);
     },
 
