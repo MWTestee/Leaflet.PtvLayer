@@ -1,1 +1,1 @@
-﻿var token = ''; // enter your xserver internet token here
+﻿var token = '602826264981627'; // enter your xserver internet token here
